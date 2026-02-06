@@ -1,24 +1,26 @@
-import { NavLink, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getToken, clearToken } from "../utils/api";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // ✅ ROLE INIT DIRECT FROM localStorage
   const [role, setRole] = useState(
     localStorage.getItem("role") || "user"
   );
+  const [isLoggedIn, setIsLoggedIn] = useState(!!getToken());
 
-  const switchToAdmin = () => {
-    localStorage.setItem("role", "admin");
-    setRole("admin");
-    navigate("/admin");
-  };
+  useEffect(() => {
+    setRole(localStorage.getItem("role") || "user");
+    setIsLoggedIn(!!getToken());
+  }, [location.pathname]);
 
-  const logout = () => {
+  const handleLogout = () => {
+    clearToken();
     localStorage.setItem("role", "user");
-    setRole("user");
-    navigate("/");
+    setIsLoggedIn(false);
+    navigate("/login");
   };
 
   return (
@@ -32,13 +34,13 @@ const Navbar = () => {
 
         {/* NAV TABS */}
         <div className="hidden md:flex bg-white/10 backdrop-blur-md rounded-full p-1">
-          {role === "user" && (
+          {role === "user" && isLoggedIn && (
             <>
               {[
-                { to: "/", label: "home" },
-                { to: "/raise", label: "report issue" },
-                { to: "/map", label: "map view" },
-                { to: "/my-complaints", label: "my complaints" },
+                { to: "/", label: "Home" },
+                { to: "/raise", label: "Report Issue" },
+                { to: "/map", label: "Map View" },
+                { to: "/my-complaints", label: "My Complaints" },
               ].map((tab) => (
                 <NavLink
                   key={tab.to}
@@ -57,11 +59,11 @@ const Navbar = () => {
             </>
           )}
 
-          {role === "admin" && (
+          {role === "admin" && isLoggedIn && (
             <>
               {[
-                { to: "/admin", label: "dashboard" },
-                { to: "/admin/complaints", label: "complaints" },
+                { to: "/admin", label: "Dashboard" },
+                { to: "/admin/complaints", label: "Complaints" },
               ].map((tab) => (
                 <NavLink
                   key={tab.to}
@@ -82,20 +84,20 @@ const Navbar = () => {
         </div>
 
         {/* ACTION BUTTON */}
-        {role === "user" ? (
+        {isLoggedIn ? (
           <button
-            onClick={switchToAdmin}
-            className="bg-white text-[#2EC4B6] px-7 py-3 rounded-full text-lg font-semibold"
+            onClick={handleLogout}
+            className="bg-white text-[#0A2540] px-7 py-3 rounded-full text-lg font-semibold hover:opacity-90"
           >
-            admin login
+            Logout
           </button>
         ) : (
-          <button
-            onClick={logout}
-            className="bg-white text-[#0A2540] px-7 py-3 rounded-full text-lg font-semibold"
+          <NavLink
+            to="/login"
+            className="bg-white text-[#2EC4B6] px-7 py-3 rounded-full text-lg font-semibold hover:opacity-90 inline-block"
           >
-            logout
-          </button>
+            Login
+          </NavLink>
         )}
       </div>
     </nav>
