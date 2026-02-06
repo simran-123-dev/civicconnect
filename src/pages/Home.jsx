@@ -1,7 +1,20 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import heroImage from "../assets/hero.jpg";
 
 const Home = () => {
+  const [suggestion, setSuggestion] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (!suggestion.trim()) {
+      return;
+    }
+    setSubmitted(true);
+    setSuggestion("");
+  };
+
   return (
     <div className="w-full">
       {/* ================= HERO SECTION ================= */}
@@ -21,9 +34,12 @@ const Home = () => {
               real action transparently.
             </p>
 
-            <button className="bg-[#2EC4B6] text-[#0A2540] px-12 py-4 rounded-full text-xl font-medium hover:opacity-90 transition">
+            <Link
+              to="/raise"
+              className="inline-block bg-[#2EC4B6] text-[#0A2540] px-12 py-4 rounded-full text-xl font-medium hover:opacity-90 transition"
+            >
               Start Reporting
-            </button>
+            </Link>
           </div>
 
           {/* RIGHT IMAGE */}
@@ -147,6 +163,56 @@ const Home = () => {
   </div>
 </section>
 
+      {/* ================= SUGGESTION BOX ================= */}
+      <section className="py-28 bg-[#F8F9FA] px-6">
+        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-14 items-center">
+          <div>
+            <h2 className="text-4xl md:text-5xl font-semibold text-[#0A2540] mb-5">
+              Suggest an improvement
+            </h2>
+            <p className="text-lg text-gray-600 leading-relaxed">
+              Share ideas for better streets, safer neighborhoods, and faster
+              civic response. Your suggestions help guide what we build next.
+            </p>
+          </div>
+
+          <form
+            onSubmit={handleSubmit}
+            className="bg-white rounded-[2rem] shadow-xl p-8 md:p-10"
+          >
+            <label
+              htmlFor="citizen-suggestion"
+              className="block text-sm font-semibold text-[#0A2540] mb-3"
+            >
+              Your suggestion
+            </label>
+            <textarea
+              id="citizen-suggestion"
+              rows="5"
+              value={suggestion}
+              onChange={(event) => {
+                setSuggestion(event.target.value);
+                setSubmitted(false);
+              }}
+              placeholder="Tell us what should improve in your city..."
+              className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#2EC4B6]/40"
+            />
+            {submitted && (
+              <p className="mt-3 text-sm text-[#2EC4B6]">
+                Thanks for sharing. We will review your suggestion.
+              </p>
+            )}
+            <button
+              type="submit"
+              disabled={!suggestion.trim()}
+              className="mt-6 w-full rounded-full bg-[#2EC4B6] text-[#0A2540] py-3 text-lg font-semibold hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              Send Suggestion
+            </button>
+          </form>
+        </div>
+      </section>
+
 
      {/* ================= FOOTER ================= */}
 <footer className="bg-[#0A2540] text-gray-300 pt-16">
@@ -198,7 +264,7 @@ const Home = () => {
         Raise issues, follow progress, and be part of the change.
       </p>
       <Link
-        to="/report"
+        to="/raise"
         className="inline-block bg-[#2EC4B6] text-[#0A2540] px-6 py-3 rounded-full font-medium hover:scale-105 transition"
       >
         Report an Issue
