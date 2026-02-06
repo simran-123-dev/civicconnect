@@ -1,10 +1,5 @@
 import { Link } from "react-router-dom";
-
-const complaints = [
-  { id: 1, title: "Broken Road", area: "Sector 21", status: "Pending" },
-  { id: 2, title: "Street Light", area: "Market", status: "In Progress" },
-  { id: 3, title: "Garbage Issue", area: "Block B", status: "Resolved" },
-];
+import { getComplaints } from "../utils/complaints";
 
 const statusStyle = {
   Pending: "text-red-600",
@@ -13,6 +8,8 @@ const statusStyle = {
 };
 
 const AdminComplaints = () => {
+  const complaints = getComplaints();
+
   return (
     <div className="min-h-screen bg-[#F8F9FA] px-6 py-20">
       <div className="max-w-7xl mx-auto">
@@ -32,10 +29,17 @@ const AdminComplaints = () => {
               </tr>
             </thead>
             <tbody>
+              {complaints.length === 0 && (
+                <tr className="border-t">
+                  <td className="p-4 text-gray-500" colSpan="4">
+                    No complaints available.
+                  </td>
+                </tr>
+              )}
               {complaints.map(c => (
                 <tr key={c.id} className="border-t">
                   <td className="p-4">{c.title}</td>
-                  <td className="p-4">{c.area}</td>
+                  <td className="p-4">{c.locationText || c.location || "-"}</td>
                   <td className={`p-4 font-medium ${statusStyle[c.status]}`}>
                     {c.status}
                   </td>

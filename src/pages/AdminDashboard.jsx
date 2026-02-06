@@ -1,16 +1,12 @@
 import { useState } from "react";
+import { getComplaints, updateComplaintStatus } from "../utils/complaints";
 
 const AdminDashboard = () => {
-  const [complaints, setComplaints] = useState(
-    JSON.parse(localStorage.getItem("complaints")) || []
-  );
+  const [complaints, setComplaints] = useState(getComplaints());
 
   const markResolved = (id) => {
-    const updated = complaints.map((c) =>
-      c.id === id ? { ...c, status: "Resolved" } : c
-    );
-    setComplaints(updated);
-    localStorage.setItem("complaints", JSON.stringify(updated));
+    updateComplaintStatus(id, "Resolved");
+    setComplaints(getComplaints());
   };
 
   return (
@@ -20,6 +16,9 @@ const AdminDashboard = () => {
       </h2>
 
       <div className="grid gap-6">
+        {complaints.length === 0 && (
+          <p className="text-gray-500">No complaints available.</p>
+        )}
         {complaints.map((c) => (
           <div
             key={c.id}
@@ -27,7 +26,9 @@ const AdminDashboard = () => {
           >
             <div>
               <h3 className="font-semibold">{c.title}</h3>
-              <p className="text-sm text-gray-500">{c.location}</p>
+              <p className="text-sm text-gray-500">
+                {c.locationText || c.location || "Unknown location"}
+              </p>
               <span className="text-sm">{c.status}</span>
             </div>
 
