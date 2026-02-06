@@ -1,6 +1,8 @@
+import IssueCard from "../Components/IssueCard";
+import { getMyComplaints } from "../utils/complaints";
+
 const MyComplaints = () => {
-  const complaints =
-    JSON.parse(localStorage.getItem("complaints")) || [];
+  const complaints = getMyComplaints();
 
   return (
     <div className="min-h-screen px-10 py-20 bg-gray-50">
@@ -14,20 +16,12 @@ const MyComplaints = () => {
         )}
 
         {complaints.map((c) => (
-          <div
+          <IssueCard
             key={c.id}
-            className="bg-white p-6 rounded-2xl shadow"
-          >
-            <h3 className="text-xl font-semibold">{c.title}</h3>
-            <p className="text-gray-600 mt-2">{c.description}</p>
-            <p className="text-sm text-gray-500 mt-1">
-              📍 {c.location}
-            </p>
-
-            <span className="inline-block mt-4 px-4 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800">
-              {c.status}
-            </span>
-          </div>
+            complaint={c}
+            actionTo={`/complaints/${c.id}`}
+            actionLabel="View Details"
+          />
         ))}
       </div>
     </div>
